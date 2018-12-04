@@ -1,7 +1,9 @@
 .update-user__form {
     padding: 20px;
   }
-  
+  .update-user-container{
+    width: 400px;
+  }
   .update-user__form input {
     margin-right: 12px;
     padding: 4px;
@@ -19,11 +21,7 @@
     font-size: 18px;
   }
 
-  .container {
-      border: 2px solid #263238;
-      margin-right: 10px;
-      padding: 10px;
-  }
+
   
 .result {
     border: 2px solid #00796b

@@ -14,17 +14,24 @@ body {
   font-family: "Roboto", sans-serif;
   font-size: 16px;
   background-color: rgb(218, 211, 190);
+}
+.container {
+  border: 2px solid #263238;
+  margin-right: 10px;
+  padding: 10px;
+}
+
+.main-container {
+  width: 1500px;
   display: flex;
-  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-right: auto;
+  margin-left: auto;
 }
 
 .all-users-container {
-  display: flex;
-  flex-direction: column;
   text-align: center;
-  justify-content: center;
-  width: 400px;
-
+  min-width: 500px;
 }
 
 .mdc-btn {
@@ -51,6 +58,8 @@ body {
 
 .search-form {
   padding: 20px;
+ 
+ 
 }
 
 .search-form input {
@@ -62,9 +71,7 @@ body {
   font-size: 18px;
   background-color: transparent;
   border-bottom: 2px solid #00796b;
-  &::placeholder {
-    color: #616161;
-  }
+  
 }
 
 .data > td {
@@ -78,6 +85,9 @@ td {
   border-top: 2px solid black;
   padding: 10px 15px;
   text-align: center;
+  width: 150px;
+  margin-right: auto;
+  margin-left: auto;
 }
 td:not(:last-child) {
   border-right: 2px solid black;

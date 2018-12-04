@@ -1,6 +1,9 @@
 .id-search-form {
   padding: 20px;
 }
+.users-id-container {
+  max-height: 200px;
+}
 
 .id-search-form input {
   margin-right: 12px;

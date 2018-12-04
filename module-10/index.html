@@ -17,45 +17,58 @@
   </head>
 
   <body>
-    <div class="all-users-container container">
-      <form class="search__form">
-        <button class="mdc-btn" type="submit">get</button>
-      </form>
-      <table class="user-table">
-        <tr class="data">
-          <td>name</td>
-          <td>age</td>
-        </tr>
-      </table>
-    </div>
-    <div class="users-id-container container">
-      <form class="id-search-form">
-        <input type="text" name="id" placeholder="Enter user's id" />
-        <button class="mdc-btn" type="submit">search</button>
-      </form>
-      <div class="result"></div>
-    </div>
-    <div class="add-user-container container">
-      <form class="add-user__form">
-        <input type="text" name="name" placeholder="Enter a name" />
-        <input type="text" name="age" placeholder="Enter an age" />
-        <button class="mdc-btn" type="submit">add</button>
-      </form>
-    </div>
-    <div class="remove-user-container container">
-      <form class="remove-user__form">
-        <input type="text" name="id" placeholder="Enter user's id to remove" />
-        <button class="mdc-btn" type="submit">remove</button>
-      </form>
-    </div>
-    <div class="update-user-container container">
-      <form class="update-user__form">
-        <input type="text" name="name" placeholder="Enter new name" />
-        <input type="text" name="age" placeholder="Enter new age" />
-        <input type="text" name="id" placeholder="Enter user's id to update" />
-        <button class="mdc-btn" type="submit">update</button>
-      </form>
-      <div class="update-user__result result"></div>
+    <div class="main-container">
+      <div class="all-users-container container">
+        <form class="search__form">
+          <button class="mdc-btn" type="submit">get all users</button>
+        </form>
+        <table class="user-table">
+          <tr class="data">
+            <td>name</td>
+            <td>age</td>
+            <td>id</td>
+          </tr>
+        </table>
+      </div>
+      <div class="users-id-container container">
+        <form class="id-search-form">
+          <input type="text" name="id" placeholder="Enter user's id" />
+          <button class="mdc-btn" type="submit">search</button>
+        </form>
+        <div class="result"></div>
+      </div>
+      <div class="add-user-container container">
+        <form class="add-user__form">
+          <input type="text" name="name" placeholder="Enter a name" />
+          <input type="text" name="age" placeholder="Enter an age" />
+          <button class="mdc-btn" type="submit">add</button>
+        </form>
+        <div class="add-user__result result"></div>
+      </div>
+      <div class="remove-user-container container">
+        <form class="remove-user__form">
+          <input
+            type="text"
+            name="id"
+            placeholder="Enter user's id to remove"
+          />
+          <button class="mdc-btn" type="submit">remove</button>
+        </form>
+        <div class="remove-user__result result"></div>
+      </div>
+      <div class="update-user-container container">
+        <form class="update-user__form">
+          <input type="text" name="name" placeholder="Enter new name" />
+          <input type="text" name="age" placeholder="Enter new age" />
+          <input
+            type="text"
+            name="id"
+            placeholder="Enter user's id to update"
+          />
+          <button class="mdc-btn" type="submit">update</button>
+        </form>
+        <div class="update-user__result result"></div>
+      </div>
     </div>
     <script src="script.js"></script>
   </body>

@@ -26,6 +26,7 @@ function showAllUsers(users) {
       `<tr>
  <td>${user.name}</td>
  <td>${user.age}</td>
+ <td>${user.id}</td>
 </tr>
 `,
     ""
@@ -59,7 +60,8 @@ function showUserById(user) {
   }
   result.innerHTML = `<p>
   User name:${user.name}<br>
-  User age:${user.age}
+  User age:${user.age}<br>
+  User id:${user.id}
   </p>`;
 }
 
@@ -67,10 +69,12 @@ function showUserById(user) {
 const addUserForm = document.querySelector(".add-user__form");
 const inputName = document.querySelector('input[name="name"]');
 const inputAge = document.querySelector('input[name="age"]');
+const addUserResult = document.querySelector(".add-user__result");
 addUserForm.addEventListener("submit", handleAddUser);
 function handleAddUser(evt) {
   evt.preventDefault();
   postUser(inputName, inputAge).then(showResult);
+  this.reset();
 }
 function postUser(userName, userAge) {
   return fetch("https://test-users-api.herokuapp.com/users/", {
@@ -88,14 +92,19 @@ function postUser(userName, userAge) {
     .then(user => user.data)
     .catch(err => console.log(err));
 }
-function showResult(result) {
-  alert(`Welcome ${result.name}!`);
-  console.log(result);
+function showResult(user) {
+  addUserResult.innerHTML = `<p>
+  User name:${user.name}<br>
+  User age:${user.age}<br>
+  User id:${user._id}
+  </p>`;
+  console.log(user);
 }
 
 // =======================   REMOVE USER BY ID   ==============================
 const removeUserForm = document.querySelector(".remove-user__form");
 const userIdInput = removeUserForm.querySelector("input");
+const removeUserResult = document.querySelector('.remove-user__result')
 removeUserForm.addEventListener("submit", hadleRemoveUser);
 
 const removeUser = id => {
@@ -103,14 +112,24 @@ const removeUser = id => {
     method: "DELETE"
   })
     .then(response => {
-      if (response.ok) alert("success");
+      if (response.ok) return response.json();
     })
-    .then(data => console.log(data))
+    .then(user => user.data)
     .catch(err => console.log(err));
 };
 function hadleRemoveUser(evt) {
   evt.preventDefault();
-  removeUser(userIdInput.value);
+  removeUser(userIdInput.value).then(showRemovedUser);
+  this.reset();
+}
+
+function showRemovedUser (user) {
+  console.log(user)
+  removeUserResult.innerHTML = `<p>
+  User name:${user.name}<br>
+  User age:${user.age}<br>
+  User id:${user.id}
+  </p>`;
 }
 
 // ====================== UPDATE USER BY ID ====================================
@@ -148,8 +167,9 @@ function handleUpdateUser(evt) {
 }
 function showNewInfo(updatedUser) {
   updateResult.innerHTML = `<p>
-  Name:${updatedUser.name}<br>
-  Age:${updatedUser.age}
+  User name:${updatedUser.name}<br>
+  User age:${updatedUser.age}<br>
+  User Id:${updatedUser.id}
   </p>`;
   console.log(updatedUser);
 }

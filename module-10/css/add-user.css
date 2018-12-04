@@ -2,8 +2,10 @@
   padding: 10px;
 }
 .add-user-container {
-  border: 2px solid #00796b;
-  max-height: 100px;
+  border: 2px solid hsl(173, 100%, 24%);
+  width: 350px;
+  max-height: 450px
+
 }
 .add-user__form input {
   margin-right: 12px;
