@@ -4,7 +4,7 @@
 .add-user-container {
   border: 2px solid hsl(173, 100%, 24%);
   width: 350px;
-  max-height: 450px
+  height: 275px
 
 }
 .add-user__form input {

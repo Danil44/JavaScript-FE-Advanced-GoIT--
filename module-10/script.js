@@ -1,9 +1,44 @@
 "use strict";
-const form = document.querySelector(".search__form");
+const getAllUsersBtn = document.querySelector(".get-users__btn");
 const userTable = document.querySelector(".user-table");
-form.addEventListener("submit", handleUserInfo);
+
+const idSearchInput = document.querySelector("input");
+const idSearchForm = document.querySelector(".id-search-form");
+const idSearchResult = document.querySelector(".result");
+const allUsersList = userTable.children;
+
+const addUserForm = document.querySelector(".add-user__form");
+const inputName = document.querySelector('input[name="name"]');
+const inputAge = document.querySelector('input[name="age"]');
+const addUserResult = document.querySelector(".add-user__result");
+
+const removeUserForm = document.querySelector(".remove-user__form");
+const userIdInput = removeUserForm.querySelector("input");
+const removeUserResult = document.querySelector(".remove-user__result");
+
+const updateUserForm = document.querySelector(".update-user__form");
+const updateIdInput = updateUserForm.querySelector('input[name="id"]');
+const updateNameInput = updateUserForm.querySelector('input[name="name"]');
+const updateAgeInput = updateUserForm.querySelector('input[name="age"]');
+const updateResult = document.querySelector(".update-user__result");
+
+function clearOtherResults() {
+  if (
+    allUsersList[1] !== undefined ||
+    idSearchResult.innerHTML !== "" ||
+    addUserResult.innerHTML !== "" ||
+    removeUserResult.innerHTML !== ""
+  ) {
+    allUsersList[1].innerHTML = "";
+    idSearchResult.innerHTML = "";
+    addUserResult.innerHTML = "";
+    removeUserResult.innerHTML = "";
+  }
+}
 
 // =======================   GET ALL USERS    ================================
+getAllUsersBtn.addEventListener("click", handleUserInfo);
+
 const getAllUsers = () => {
   return fetch("https://test-users-api.herokuapp.com/users/")
     .then(response => {
@@ -17,7 +52,7 @@ const getAllUsers = () => {
 function handleUserInfo(evt) {
   evt.preventDefault();
   getAllUsers().then(showAllUsers);
-  this.reset();
+  getAllUsersBtn.removeEventListener("click", handleUserInfo);
 }
 function showAllUsers(users) {
   userTable.innerHTML += users.reduce(
@@ -34,9 +69,6 @@ function showAllUsers(users) {
 }
 
 // =======================   GET USER BY ID    ================================
-const input = document.querySelector("input");
-const idSearchForm = document.querySelector(".id-search-form");
-const result = document.querySelector(".result");
 idSearchForm.addEventListener("submit", handleUser);
 
 const getUserById = id => {
@@ -48,17 +80,22 @@ const getUserById = id => {
     .then(user => user.data)
     .catch(err => console.log(err));
 };
+
 function handleUser(evt) {
   evt.preventDefault();
-  getUserById(input.value).then(showUserById);
-  this.reset();
-}
-function showUserById(user) {
-  if (user === undefined) {
-    return (result.innerHTML = `<p> User with this ID is not defined!
+  if (idSearchInput.value === "") {
+    idSearchForm.classList.add("invalid-form");
+    return (idSearchResult.innerHTML = `<p class="invalid-form"> Please, enter users's id!
     </p>`);
   }
-  result.innerHTML = `<p>
+  getUserById(idSearchInput.value).then(showUserById);
+  this.reset();
+}
+
+function showUserById(user) {
+  clearOtherResults();
+  idSearchForm.classList.remove("invalid-form");
+  idSearchResult.innerHTML = `<p>
   User name:${user.name}<br>
   User age:${user.age}<br>
   User id:${user.id}
@@ -66,17 +103,18 @@ function showUserById(user) {
 }
 
 // =======================   ADD NEW USER    ================================
-const addUserForm = document.querySelector(".add-user__form");
-const inputName = document.querySelector('input[name="name"]');
-const inputAge = document.querySelector('input[name="age"]');
-const addUserResult = document.querySelector(".add-user__result");
 addUserForm.addEventListener("submit", handleAddUser);
+
 function handleAddUser(evt) {
   evt.preventDefault();
-  postUser(inputName, inputAge).then(showResult);
+  if (/[0-9]/.test(inputName.value) || Number.isNaN(inputAge.value)) {
+    return (addUserResult.innerHTML = `<p class="invalid-form">INVALID INPUT!</p>`);
+  }
+  addUser(inputName, inputAge).then(showAddedUser);
   this.reset();
 }
-function postUser(userName, userAge) {
+
+function addUser(userName, userAge) {
   return fetch("https://test-users-api.herokuapp.com/users/", {
     method: "POST",
     body: JSON.stringify({
@@ -92,19 +130,17 @@ function postUser(userName, userAge) {
     .then(user => user.data)
     .catch(err => console.log(err));
 }
-function showResult(user) {
+
+function showAddedUser(user) {
+  clearOtherResults();
   addUserResult.innerHTML = `<p>
   User name:${user.name}<br>
   User age:${user.age}<br>
   User id:${user._id}
   </p>`;
-  console.log(user);
 }
 
 // =======================   REMOVE USER BY ID   ==============================
-const removeUserForm = document.querySelector(".remove-user__form");
-const userIdInput = removeUserForm.querySelector("input");
-const removeUserResult = document.querySelector('.remove-user__result')
 removeUserForm.addEventListener("submit", hadleRemoveUser);
 
 const removeUser = id => {
@@ -117,14 +153,15 @@ const removeUser = id => {
     .then(user => user.data)
     .catch(err => console.log(err));
 };
+
 function hadleRemoveUser(evt) {
   evt.preventDefault();
   removeUser(userIdInput.value).then(showRemovedUser);
   this.reset();
 }
 
-function showRemovedUser (user) {
-  console.log(user)
+function showRemovedUser(user) {
+  clearOtherResults();
   removeUserResult.innerHTML = `<p>
   User name:${user.name}<br>
   User age:${user.age}<br>
@@ -133,12 +170,6 @@ function showRemovedUser (user) {
 }
 
 // ====================== UPDATE USER BY ID ====================================
-const updateUserForm = document.querySelector(".update-user__form");
-const updateIdInput = updateUserForm.querySelector('input[name="id"]');
-const updateNameInput = updateUserForm.querySelector('input[name="name"]');
-const updateAgeInput = updateUserForm.querySelector('input[name="age"]');
-const updateResult = document.querySelector(".update-user__result");
-
 updateUserForm.addEventListener("submit", handleUpdateUser);
 
 const updateUser = (id, user) => {
@@ -156,6 +187,7 @@ const updateUser = (id, user) => {
     .then(user => user.data)
     .catch(err => console.log(err));
 };
+
 function handleUpdateUser(evt) {
   const userToUpdate = {
     name: updateNameInput.value,
@@ -165,11 +197,12 @@ function handleUpdateUser(evt) {
   updateUser(updateIdInput.value, userToUpdate).then(showNewInfo);
   this.reset();
 }
+
 function showNewInfo(updatedUser) {
+  clearOtherResults();
   updateResult.innerHTML = `<p>
   User name:${updatedUser.name}<br>
   User age:${updatedUser.age}<br>
   User Id:${updatedUser.id}
   </p>`;
-  console.log(updatedUser);
 }
