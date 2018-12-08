@@ -95,6 +95,7 @@ function handleUser(evt) {
 function showUserById(user) {
   clearOtherResults();
   idSearchForm.classList.remove("invalid-form");
+  getAllUsersBtn.addEventListener("click", handleUserInfo);
   idSearchResult.innerHTML = `<p>
   User name:${user.name}<br>
   User age:${user.age}<br>
@@ -108,7 +109,7 @@ addUserForm.addEventListener("submit", handleAddUser);
 function handleAddUser(evt) {
   evt.preventDefault();
   if (/[0-9]/.test(inputName.value) || Number.isNaN(inputAge.value)) {
-    return (addUserResult.innerHTML = `<p class="invalid-form">INVALID INPUT!</p>`);
+    return (addUserResult.innerHTML = `<p class="invalid-form">INVALID INPUT!<br>Name can match only a characters.<br>Age can match only a numbers.</p>`);
   }
   addUser(inputName, inputAge).then(showAddedUser);
   this.reset();
@@ -133,6 +134,7 @@ function addUser(userName, userAge) {
 
 function showAddedUser(user) {
   clearOtherResults();
+  getAllUsersBtn.addEventListener("click", handleUserInfo);
   addUserResult.innerHTML = `<p>
   User name:${user.name}<br>
   User age:${user.age}<br>
@@ -162,6 +164,7 @@ function hadleRemoveUser(evt) {
 
 function showRemovedUser(user) {
   clearOtherResults();
+  getAllUsersBtn.addEventListener("click", handleUserInfo);
   removeUserResult.innerHTML = `<p>
   User name:${user.name}<br>
   User age:${user.age}<br>
@@ -200,6 +203,7 @@ function handleUpdateUser(evt) {
 
 function showNewInfo(updatedUser) {
   clearOtherResults();
+  getAllUsersBtn.addEventListener("click", handleUserInfo);
   updateResult.innerHTML = `<p>
   User name:${updatedUser.name}<br>
   User age:${updatedUser.age}<br>
