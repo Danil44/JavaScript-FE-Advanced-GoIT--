@@ -1,6 +1,7 @@
 "use strict";
 const getAllUsersBtn = document.querySelector(".get-users__btn");
 const userTable = document.querySelector(".user-table");
+const usersResult = document.querySelector(".users-result");
 
 const idSearchInput = document.querySelector("input");
 const idSearchForm = document.querySelector(".id-search-form");
@@ -23,21 +24,11 @@ const updateAgeInput = updateUserForm.querySelector('input[name="age"]');
 const updateResult = document.querySelector(".update-user__result");
 
 function clearOtherResults() {
-  if (allUsersList[1] !== undefined) {
-    allUsersList[1].parentNode.removeChild(allUsersList[1]);
-  }
-  if (idSearchResult.innerHTML !== "") {
-    idSearchResult.innerHTML = "";
-  }
-  if (addUserResult.innerHTML !== "") {
-    addUserResult.innerHTML = "";
-  }
-  if (removeUserResult.innerHTML !== "") {
-    removeUserResult.innerHTML = "";
-  }
-  if (updateResult.innerHTML !== "") {
-    updateResult.innerHTML = "";
-  }
+  usersResult.innerHTML = "";
+  idSearchResult.innerHTML = "";
+  addUserResult.innerHTML = "";
+  removeUserResult.innerHTML = "";
+  updateResult.innerHTML = "";
 }
 
 // =======================   GET ALL USERS    ================================
@@ -60,7 +51,7 @@ function handleUserInfo(evt) {
 }
 function showAllUsers(users) {
   clearOtherResults();
-  userTable.innerHTML += users.reduce(
+  usersResult.innerHTML = users.reduce(
     (acc, user) =>
       acc +
       `<tr>
@@ -114,16 +105,7 @@ function showUserById(user) {
 // =======================   ADD NEW USER    ================================
 addUserForm.addEventListener("submit", handleAddUser);
 
-function handleAddUser(evt) {
-  evt.preventDefault();
-  if (/[0-9]/.test(inputName.value) || Number.isNaN(inputAge.value)) {
-    return (addUserResult.innerHTML = `<p class="invalid-form">INVALID INPUT!<br>Name can match only a characters.<br>Age can match only a numbers.</p>`);
-  }
-  addUser(inputName, inputAge).then(showAddedUser);
-  this.reset();
-}
-
-function addUser(userName, userAge) {
+const addUser = (userName, userAge) => {
   return fetch("https://test-users-api.herokuapp.com/users/", {
     method: "POST",
     body: JSON.stringify({
@@ -138,6 +120,15 @@ function addUser(userName, userAge) {
     .then(response => response.json())
     .then(user => user.data)
     .catch(err => console.log(err));
+};
+
+function handleAddUser(evt) {
+  evt.preventDefault();
+  if (/[0-9]/.test(inputName.value) || Number.isNaN(inputAge.value)) {
+    return (addUserResult.innerHTML = `<p class="invalid-form">INVALID INPUT!<br>Name can match only a characters.<br>Age can match only a numbers.</p>`);
+  }
+  addUser(inputName, inputAge).then(showAddedUser);
+  this.reset();
 }
 
 function showAddedUser(user) {
@@ -173,7 +164,7 @@ function hadleRemoveUser(evt) {
 function showRemovedUser(user) {
   clearOtherResults();
   getAllUsersBtn.addEventListener("click", handleUserInfo);
-  if (user === undefined) {
+  if (user === undefined || user === null) {
     return (removeUserResult.innerHTML = `<p class="invalid-form"> User with this id is not defined! 
     </p>`);
   }
