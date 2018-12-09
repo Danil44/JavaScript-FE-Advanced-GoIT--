@@ -128,22 +128,22 @@ function pushCheckboxes() {
   });
 }
 
+function applyCheckedFields(laptop) {
+  const size =
+    filter.size.length === 0 ? true : filter.size.includes(String(laptop.size));
+  const color =
+    filter.color.length === 0
+      ? true
+      : filter.color.includes(String(laptop.color));
+  const releaseDate =
+    filter.release_date.length === 0
+      ? true
+      : filter.release_date.includes(String(laptop.release_date));
+  return size && color && releaseDate;
+}
+
 function filterProducts() {
-  return laptops.filter(laptop => {
-    const size =
-      filter.size.length === 0
-        ? true
-        : filter.size.includes(String(laptop.size));
-    const color =
-      filter.color.length === 0
-        ? true
-        : filter.color.includes(String(laptop.color));
-    const releaseDate =
-      filter.release_date.length === 0
-        ? true
-        : filter.release_date.includes(String(laptop.release_date));
-    return size && color && releaseDate;
-  });
+  return laptops.filter(laptop => applyCheckedFields(laptop));
 }
 
 function showProducts() {
@@ -162,4 +162,3 @@ function clearCheckboxes() {
   checkBoxes.forEach(box => (box.checked ? (box.checked = false) : null));
   productsList.innerHTML = defaultMarkup;
 }
-

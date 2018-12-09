@@ -23,16 +23,20 @@ const updateAgeInput = updateUserForm.querySelector('input[name="age"]');
 const updateResult = document.querySelector(".update-user__result");
 
 function clearOtherResults() {
-  if (
-    allUsersList[1] !== undefined ||
-    idSearchResult.innerHTML !== "" ||
-    addUserResult.innerHTML !== "" ||
-    removeUserResult.innerHTML !== ""
-  ) {
-    allUsersList[1].innerHTML = "";
+  if (allUsersList[1] !== undefined) {
+    allUsersList[1].parentNode.removeChild(allUsersList[1]);
+  }
+  if (idSearchResult.innerHTML !== "") {
     idSearchResult.innerHTML = "";
+  }
+  if (addUserResult.innerHTML !== "") {
     addUserResult.innerHTML = "";
+  }
+  if (removeUserResult.innerHTML !== "") {
     removeUserResult.innerHTML = "";
+  }
+  if (updateResult.innerHTML !== "") {
+    updateResult.innerHTML = "";
   }
 }
 
@@ -55,6 +59,7 @@ function handleUserInfo(evt) {
   getAllUsersBtn.removeEventListener("click", handleUserInfo);
 }
 function showAllUsers(users) {
+  clearOtherResults();
   userTable.innerHTML += users.reduce(
     (acc, user) =>
       acc +
@@ -70,7 +75,6 @@ function showAllUsers(users) {
 
 // =======================   GET USER BY ID    ================================
 idSearchForm.addEventListener("submit", handleUser);
-
 const getUserById = id => {
   return fetch(`https://test-users-api.herokuapp.com/users/${id}`)
     .then(response => {
@@ -96,6 +100,10 @@ function showUserById(user) {
   clearOtherResults();
   idSearchForm.classList.remove("invalid-form");
   getAllUsersBtn.addEventListener("click", handleUserInfo);
+  if (user === undefined) {
+    return (idSearchResult.innerHTML = `<p class="invalid-form"> User with this id is not defined! 
+    </p>`);
+  }
   idSearchResult.innerHTML = `<p>
   User name:${user.name}<br>
   User age:${user.age}<br>
@@ -165,6 +173,10 @@ function hadleRemoveUser(evt) {
 function showRemovedUser(user) {
   clearOtherResults();
   getAllUsersBtn.addEventListener("click", handleUserInfo);
+  if (user === undefined) {
+    return (removeUserResult.innerHTML = `<p class="invalid-form"> User with this id is not defined! 
+    </p>`);
+  }
   removeUserResult.innerHTML = `<p>
   User name:${user.name}<br>
   User age:${user.age}<br>
@@ -204,6 +216,10 @@ function handleUpdateUser(evt) {
 function showNewInfo(updatedUser) {
   clearOtherResults();
   getAllUsersBtn.addEventListener("click", handleUserInfo);
+  if (updatedUser === undefined) {
+    return (updateResult.innerHTML = `<p class="invalid-form"> User with this id is not defined! 
+    </p>`);
+  }
   updateResult.innerHTML = `<p>
   User name:${updatedUser.name}<br>
   User age:${updatedUser.age}<br>
