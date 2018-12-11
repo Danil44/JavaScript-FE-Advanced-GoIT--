@@ -5,7 +5,7 @@ const usersResult = document.querySelector(".users-result");
 
 const idSearchInput = document.querySelector("input");
 const idSearchForm = document.querySelector(".id-search-form");
-const idSearchResult = document.querySelector(".result");
+const idSearchResult = document.querySelector(".id-search-result");
 const allUsersList = userTable.children;
 
 const addUserForm = document.querySelector(".add-user__form");
@@ -23,33 +23,35 @@ const updateNameInput = updateUserForm.querySelector('input[name="name"]');
 const updateAgeInput = updateUserForm.querySelector('input[name="age"]');
 const updateResult = document.querySelector(".update-user__result");
 
-function clearOtherResults() {
-  usersResult.innerHTML = "";
-  idSearchResult.innerHTML = "";
-  addUserResult.innerHTML = "";
-  removeUserResult.innerHTML = "";
-  updateResult.innerHTML = "";
-}
+const allResults = Array.from(document.querySelectorAll(".result"));
+
+const USER_IS_UNDEFINED = `<p class="invalid-form"> User with this id is not defined! 
+</p>`;
+const IVALID_INPUT = `<p class="invalid-form">INVALID INPUT!<br>Name can match only a characters.<br>Age can match only a numbers.</p>`;
+const EMPTY_INPUT = `<p class="invalid-form"> Please, enter users's id!
+</p>`;
+const API_USERS = "https://test-users-api.herokuapp.com/users/";
 
 // =======================   GET ALL USERS    ================================
 getAllUsersBtn.addEventListener("click", handleUserInfo);
 
-const getAllUsers = () => {
-  return fetch("https://test-users-api.herokuapp.com/users/")
+const fetchAllUsers = () => {
+  return fetch(API_USERS)
     .then(response => {
       if (response.ok) return response.json();
       throw new Error(response.statusText);
     })
-    .then(user => user.data)
+    .then(user => showAllUsersTable(user.data))
     .catch(err => console.log(err));
 };
 
 function handleUserInfo(evt) {
   evt.preventDefault();
-  getAllUsers().then(showAllUsers);
+  fetchAllUsers();
   getAllUsersBtn.removeEventListener("click", handleUserInfo);
 }
-function showAllUsers(users) {
+
+function showAllUsersTable(users) {
   clearOtherResults();
   usersResult.innerHTML = users.reduce(
     (acc, user) =>
@@ -66,13 +68,18 @@ function showAllUsers(users) {
 
 // =======================   GET USER BY ID    ================================
 idSearchForm.addEventListener("submit", handleUser);
-const getUserById = id => {
-  return fetch(`https://test-users-api.herokuapp.com/users/${id}`)
+const fetchUserId = id => {
+  return fetch(API_USERS + id)
     .then(response => {
       if (response.ok) return response.json();
       throw new Error(response.statusText);
     })
-    .then(user => user.data)
+    .then(user => {
+      if (user.data === undefined || null) {
+        return (idSearchResult.innerHTML = USER_IS_UNDEFINED);
+      }
+      showResult(user.data, idSearchResult);
+    })
     .catch(err => console.log(err));
 };
 
@@ -80,26 +87,10 @@ function handleUser(evt) {
   evt.preventDefault();
   if (idSearchInput.value === "") {
     idSearchForm.classList.add("invalid-form");
-    return (idSearchResult.innerHTML = `<p class="invalid-form"> Please, enter users's id!
-    </p>`);
+    return (idSearchResult.innerHTML = EMPTY_INPUT);
   }
-  getUserById(idSearchInput.value).then(showUserById);
+  fetchUserId(idSearchInput.value);
   this.reset();
-}
-
-function showUserById(user) {
-  clearOtherResults();
-  idSearchForm.classList.remove("invalid-form");
-  getAllUsersBtn.addEventListener("click", handleUserInfo);
-  if (user === undefined) {
-    return (idSearchResult.innerHTML = `<p class="invalid-form"> User with this id is not defined! 
-    </p>`);
-  }
-  idSearchResult.innerHTML = `<p>
-  User name:${user.name}<br>
-  User age:${user.age}<br>
-  User id:${user.id}
-  </p>`;
 }
 
 // =======================   ADD NEW USER    ================================
@@ -118,68 +109,49 @@ const addUser = (userName, userAge) => {
     }
   })
     .then(response => response.json())
-    .then(user => user.data)
+    .then(user => showResult(user.data, addUserResult))
     .catch(err => console.log(err));
 };
 
 function handleAddUser(evt) {
   evt.preventDefault();
   if (/[0-9]/.test(inputName.value) || Number.isNaN(inputAge.value)) {
-    return (addUserResult.innerHTML = `<p class="invalid-form">INVALID INPUT!<br>Name can match only a characters.<br>Age can match only a numbers.</p>`);
+    return (addUserResult.innerHTML = IVALID_INPUT);
   }
-  addUser(inputName, inputAge).then(showAddedUser);
+  addUser(inputName, inputAge);
   this.reset();
-}
-
-function showAddedUser(user) {
-  clearOtherResults();
-  getAllUsersBtn.addEventListener("click", handleUserInfo);
-  addUserResult.innerHTML = `<p>
-  User name:${user.name}<br>
-  User age:${user.age}<br>
-  User id:${user._id}
-  </p>`;
 }
 
 // =======================   REMOVE USER BY ID   ==============================
 removeUserForm.addEventListener("submit", hadleRemoveUser);
 
 const removeUser = id => {
-  return fetch(`https://test-users-api.herokuapp.com/users/${id}`, {
+  return fetch(API_USERS + id, {
     method: "DELETE"
   })
     .then(response => {
       if (response.ok) return response.json();
     })
-    .then(user => user.data)
+    .then(user => {
+      if (user.data === undefined || user.data === null) {
+        return (removeUserResult.innerHTML = USER_IS_UNDEFINED);
+      }
+      showResult(user.data, removeUserResult);
+    })
     .catch(err => console.log(err));
 };
 
 function hadleRemoveUser(evt) {
   evt.preventDefault();
-  removeUser(userIdInput.value).then(showRemovedUser);
+  removeUser(userIdInput.value);
   this.reset();
-}
-
-function showRemovedUser(user) {
-  clearOtherResults();
-  getAllUsersBtn.addEventListener("click", handleUserInfo);
-  if (user === undefined || user === null) {
-    return (removeUserResult.innerHTML = `<p class="invalid-form"> User with this id is not defined! 
-    </p>`);
-  }
-  removeUserResult.innerHTML = `<p>
-  User name:${user.name}<br>
-  User age:${user.age}<br>
-  User id:${user.id}
-  </p>`;
 }
 
 // ====================== UPDATE USER BY ID ====================================
 updateUserForm.addEventListener("submit", handleUpdateUser);
 
 const updateUser = (id, user) => {
-  return fetch(`https://test-users-api.herokuapp.com/users/${id}`, {
+  return fetch(API_USERS + id, {
     method: "PUT",
     body: JSON.stringify(user),
     headers: {
@@ -190,7 +162,12 @@ const updateUser = (id, user) => {
     .then(response => {
       if (response.ok) return response.json();
     })
-    .then(user => user.data)
+    .then(user => {
+      if (updatedUser === undefined) {
+        return (updateResult.innerHTML = USER_IS_UNDEFINED);
+      }
+      showResult(user.data, updateResult);
+    })
     .catch(err => console.log(err));
 };
 
@@ -200,20 +177,21 @@ function handleUpdateUser(evt) {
     age: Number(updateAgeInput.value)
   };
   evt.preventDefault();
-  updateUser(updateIdInput.value, userToUpdate).then(showNewInfo);
+  updateUser(updateIdInput.value, userToUpdate);
   this.reset();
 }
+// ==========================================================================
+function clearOtherResults() {
+  allResults.forEach(result => (result.innerHTML = ""));
+}
 
-function showNewInfo(updatedUser) {
+function showResult(user, resultBlock) {
   clearOtherResults();
+  idSearchForm.classList.remove("invalid-form");
   getAllUsersBtn.addEventListener("click", handleUserInfo);
-  if (updatedUser === undefined) {
-    return (updateResult.innerHTML = `<p class="invalid-form"> User with this id is not defined! 
-    </p>`);
-  }
-  updateResult.innerHTML = `<p>
-  User name:${updatedUser.name}<br>
-  User age:${updatedUser.age}<br>
-  User Id:${updatedUser.id}
+  resultBlock.innerHTML = `<p>
+  User name:${user.name}<br>
+  User age:${user.age}<br>
+  User id:${user.id}
   </p>`;
 }

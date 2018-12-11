@@ -98,6 +98,7 @@ const filter = {
 };
 const filterForm = document.querySelector(".js-form");
 const checkBoxes = Array.from(filterForm.querySelectorAll("input"));
+const UNDEFINED_QUERY = `<p class="product__not-found">Sorry, no matches were found for your query.</p>`;
 const productCardSource = document
   .querySelector("#product-item")
   .innerHTML.trim();
@@ -128,28 +129,25 @@ function pushCheckboxes() {
   });
 }
 
-function applyCheckedFields(laptop) {
-  const size =
-    filter.size.length === 0 ? true : filter.size.includes(String(laptop.size));
-  const color =
-    filter.color.length === 0
-      ? true
-      : filter.color.includes(String(laptop.color));
-  const releaseDate =
-    filter.release_date.length === 0
-      ? true
-      : filter.release_date.includes(String(laptop.release_date));
-  return size && color && releaseDate;
+function applyCheckedFields(laptopParam, filterParam) {
+  return filterParam.length === 0
+    ? true
+    : filterParam.includes(String(laptopParam));
 }
 
 function filterProducts() {
-  return laptops.filter(laptop => applyCheckedFields(laptop));
+  return laptops
+    .filter(laptop => applyCheckedFields(laptop.size, filter.size))
+    .filter(laptop => applyCheckedFields(laptop.color, filter.color))
+    .filter(laptop =>
+      applyCheckedFields(laptop.release_date, filter.release_date)
+    );
 }
 
 function showProducts() {
   const filteredMarkup = template(filterProducts);
   if (filteredMarkup === "") {
-    productsList.innerHTML = `<p class="product__not-found">Sorry, no matches were found for your query.</p>`;
+    productsList.innerHTML = UNDEFINED_QUERY;
   } else {
     productsList.innerHTML = filteredMarkup;
   }
