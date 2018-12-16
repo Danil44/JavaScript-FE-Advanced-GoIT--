@@ -8,8 +8,10 @@
     </div>
     <div class="note__delete-btn"><span></span></div>
     <div class="note__item-wrapper">
-        <h3 class="note__title">{{title}}</h3>
-        <img class="note__image" src="{{img}}" alt="{{title}}">
+        <a class="note__link" href="{{url}}" target="blank">
+            <h3 class="note__title">{{title}}</h3>
+            <img class="note__image" src="{{img}}" alt="{{title}}">
+        </a>
         <div class="note-desc-wrapper">
             <a href="{{url}}" class="note__link-title">{{url}}</a>
             <p class="note__desc">{{desc}}</p>
