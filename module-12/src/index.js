@@ -8,6 +8,7 @@ import "./scss/components/note__item.scss";
 import "./scss/components/modal-window.scss";
 import "./scss/components/spinner.scss";
 import "./scss/components/modal-question.scss";
+import "./scss/components/container.scss";
 import * as storage from "./services/storage";
 import { fetchURLPreview } from "./services/api";
 import noteTpl from "./templates/notes.hbs";

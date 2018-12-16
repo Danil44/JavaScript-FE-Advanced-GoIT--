@@ -1,11 +1,20 @@
 .modal-question {
   position: absolute;
-  top: -25%;
-  left: -25%;
+  top: -19%;
+  left: 5%;
   width: 210px;
   height: 90px;
   background-color: $primary-light-color;
   box-shadow: 1px 1px 8px 0px rgba(0, 0, 0, 0.75);
+  transition: 0.2s ease-in;
+  @media (min-width: 768px) {
+    top: -32%;
+    left: 3%;
+  }
+  @media (min-width: 1200px) {
+    top: 15%;
+    left: -26%;
+  }
 }
 
 .modal-question__content {
