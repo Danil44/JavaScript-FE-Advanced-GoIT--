@@ -28,7 +28,7 @@ if (persistedNotes) {
 
 function hydrateNotesGrid(data) {
   updateNoteView(createLocalNotesGrid(data));
-  addEventListeners();
+  addNoteEventListeners();
 }
 // ====================================================
 
