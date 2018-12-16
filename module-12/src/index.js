@@ -5,64 +5,88 @@ import "./scss/variables.scss";
 import "./scss/components/input-form.scss";
 import "./scss/components/background.scss";
 import "./scss/components/note__item.scss";
+import "./scss/components/modal-window.scss";
+import "./scss/components/spinner.scss";
+import "./scss/components/modal-question.scss";
 import * as storage from "./services/storage";
 import { fetchURLPreview } from "./services/api";
 import noteTpl from "./templates/notes.hbs";
+import { ETIME } from "constants";
 
 const inputForm = document.querySelector(".input-form");
 const input = inputForm.querySelector("input");
 const notesList = document.querySelector(".notes__list");
-const CAN_NOT_LOAD_URL = `<h2 class="errors__text">Sorry, we can't load this URL.</h2>`;
-const ALREADY_NOTED_URL = `<h2 class="errors__text">You already noted this URL!</h2>`;
-const errorsWrapper = document.querySelector(".note__errors-wrapper");
+const spinner = document.querySelector(".spinner-wrapper");
+const errorModalWindow = document.querySelector(".modal");
+const errorTitle = errorModalWindow.querySelector(".modal__title");
 
-const persistedNotes = storage.get() ? storage.get() : [];
-const userNotes = [];
-console.log(persistedNotes);
+const persistedNotes = storage.get();
+let userNotes = persistedNotes ? persistedNotes : [];
 if (persistedNotes) {
   hydrateNotesGrid(persistedNotes);
 }
 
 function hydrateNotesGrid(data) {
   updateNoteView(createLocalNotesGrid(data));
+  addEventListeners();
 }
 // ====================================================
 
 inputForm.addEventListener("submit", showNote);
-notesList.addEventListener("click", deleteNote);
 
 function showNote(evt) {
   evt.preventDefault();
   handleFetch();
+  console.log("adding: ", userNotes);
   this.reset();
 }
 
+function addNoteEventListeners() {
+  const openerQuestionModal = notesList.querySelectorAll(".note__delete-btn");
+  openerQuestionModal.forEach(note =>
+    note.addEventListener("click", deleteNote)
+  );
+  const questionModals = notesList.querySelectorAll(".modal-question");
+  questionModals.forEach(button =>
+    button.addEventListener("click", deleteNote)
+  );
+}
+
+function toggleSpinner() {
+  spinner.classList.toggle("spinner--hidden");
+}
+
 function handleFetch() {
+  toggleSpinner();
+
   fetchURLPreview(input.value).then(noteData => {
     if (noteData === undefined) {
-      errorsWrapper.insertAdjacentHTML("afterbegin", CAN_NOT_LOAD_URL);
+      errorTitle.textContent = "Sorry, we can't load this URL";
+      showErrorModal();
       return;
     }
-    if (checkOnSameURL(noteData.url)) return;
-    userNotes.push(noteData);
+    if (checkOnSameURL(noteData)) return;
+
+    userNotes.unshift(noteData);
     storage.set(userNotes);
-    resetErrorsBlock();
     updateNoteView(createNewNote(noteData));
-    console.log(storage.get());
+    addNoteEventListeners();
+    toggleSpinner();
   });
 }
 
-function checkOnSameURL(inputURL) {
-  const sameURL = persistedNotes.find(note => note.url === inputURL);
+function checkOnSameURL(newNote) {
+  const sameURL = userNotes.find(note => note.url === newNote.url);
   if (sameURL === undefined) {
     return false;
   }
-  errorsWrapper.insertAdjacentHTML("afterbegin", ALREADY_NOTED_URL);
+  errorTitle.textContent = "You already noted this URL";
+  showErrorModal();
   return true;
 }
 
-function resetErrorsBlock() {
-  errorsWrapper.innerHTML = "";
+function updateNoteView(note) {
+  notesList.insertAdjacentHTML("afterbegin", note);
 }
 
 function createNewNote(inputNote) {
@@ -88,18 +112,44 @@ function createLocalNotesGrid(localNotes) {
   );
 }
 
-function updateNoteView(note) {
-  notesList.insertAdjacentHTML("afterbegin", note);
-}
-
 function deleteNote(evt) {
   evt.preventDefault();
-  const noteURL = document.querySelector(".note__link");
-  const removedNote = persistedNotes.find(item => item.url === noteURL.href);
-  localStorage.removeItem(removedNote);
-  const deleteBtn = document.querySelector(".note__delete-btn");
-  if (evt.target === deleteBtn || evt.target === deleteBtn.children[0]) {
-    deleteBtn.parentNode.remove();
+  if (evt.target === this || evt.target === this.firstElementChild) {
+    const quesitonModal = this.parentElement.firstElementChild;
+    showQuestionModal(quesitonModal, this);
+  }
+  if (evt.target.type === "reset") {
+    const rotateBtn = this.parentElement.querySelector(".note__delete-btn");
+    showQuestionModal(this.parentElement.firstElementChild, rotateBtn);
+  }
+  if (evt.target.type == "submit") {
+    const noteURL = this.parentElement.querySelector(".note__link");
+    const noteToDelete = noteURL.parentElement.parentElement;
+    userNotes = userNotes.filter(item => item.url !== noteURL.href);
+    storage.set(userNotes);
+    noteToDelete.remove();
   }
   return;
+}
+
+function showQuestionModal(modal, rotate) {
+  rotate.classList.toggle("btn-rotate");
+  modal.classList.toggle("modal--hidden-display");
+  setTimeout(() => {
+    modal.classList.toggle("modal--hidden-opacity");
+  }, 0);
+}
+
+function showErrorModal() {
+  toggleSpinner();
+  errorModalWindow.classList.remove("modal--hidden-display");
+  setTimeout(() => {
+    errorModalWindow.classList.remove("modal--hidden-opacity");
+  }, 0);
+  setTimeout(() => {
+    errorModalWindow.classList.add("modal--hidden-opacity");
+  }, 3000);
+  setTimeout(() => {
+    errorModalWindow.classList.add("modal--hidden-display");
+  }, 4000);
 }

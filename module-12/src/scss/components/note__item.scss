@@ -14,7 +14,6 @@
   padding: 25px;
   height: 225px;
   max-width: 860px;
-  overflow: hidden;
   border-radius: 15px;
   margin-bottom: 40px;
   background-color: $secondary-dark-color;
@@ -69,12 +68,12 @@
 
 .note__link-title {
   margin-bottom: 7px;
-    font-size: 16px;
-    width: 100%;
-    text-decoration-line: underline;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    padding-bottom: 3px;
+  font-size: 16px;
+  width: 100%;
+  text-decoration-line: underline;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding-bottom: 3px;
 }
 
 .note__delete-btn {
@@ -97,19 +96,19 @@
     width: 31px;
     height: 2px;
     background-color: #2e2e2edf;
-    transform: rotate(-90deg) translate(1px, 0px);
+    transform: rotate(133deg);
     transition: 0.2s linear;
   }
 
   & + span,
   span::after {
     @extend span::before;
-    transform: rotate(90deg) translate(-2px, 0px);
-  }
-  &:hover span::before {
-    transform: rotate(133deg);
-  }
-  &:hover span::after {
     transform: rotate(44deg);
   }
+}
+.btn-rotate span::before {
+  transform: rotate(-90deg);
+}
+.btn-rotate span::after {
+  transform: rotate(90deg);
 }
