@@ -1,4 +1,3 @@
-import "./styles.css";
 import "./reset.css";
 import "./scss/basics.scss";
 import "./scss/variables.scss";
