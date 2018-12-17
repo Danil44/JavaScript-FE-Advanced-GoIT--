@@ -4,7 +4,7 @@
 
 .modal--hidden-opacity {
   opacity: 0;
-  transition: 0.3s ease-in-out;
+  transition: 0.2s ease-in-out;
 }
 
 .modal {
@@ -15,7 +15,7 @@
   height: 100%;
   background-color: $modal-background-color;
   z-index: 3;
-  transition: 0.3s ease-in-out;
+  transition: 0.2s ease-in;
 }
 
 .modal__content {
@@ -23,21 +23,31 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -100%);
-  min-width: 400px;
-  height: 65px;
+  width: 300px;
+  height: 60px;
   background-color: $primary-light-color;
   border-radius: 3px;
   transition: 1s linear;
+
+  @media (min-width: 768px) {
+    min-width: 400px;
+    height: 68px;
+  }
 }
 
 .modal__title {
-  font-size: 22px;
+  font-size: 14px;
   letter-spacing: 1px;
-  color: $error-color;
+  color: #e30700;
   text-align: center;
-  margin-top: 20px;
-  margin-right: 48px;
-  padding: 0 15px;
+  margin-top: 22px;
+  margin-right: 47px;
+
+  @media (min-width: 768px) {
+    font-size: 20px;
+    padding: 0 15px;
+    margin-right: 47px;
+  }
 
   &::after {
     content: "";
@@ -45,10 +55,17 @@
     position: absolute;
     background: url("../../img-svg/exclamation-mark.svg");
     background-repeat: no-repeat;
-    top: 0%;
-    right: 0;
+    top: 17%;
+    right: 9px;
     transform: translate(-34%, 28%);
-    width: 40px;
-    height: 40px;
+    width: 25px;
+    height: 25px;
+
+    @media (min-width: 768px) {
+      width: 40px;
+      height: 40px;
+      top: 0;
+      right: 0;
+    }
   }
 }

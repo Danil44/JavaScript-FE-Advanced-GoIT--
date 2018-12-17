@@ -145,11 +145,11 @@ function showErrorModal() {
   errorModalWindow.classList.remove("modal--hidden-display");
   setTimeout(() => {
     errorModalWindow.classList.remove("modal--hidden-opacity");
-  }, 0);
+  }, 10);
   setTimeout(() => {
     errorModalWindow.classList.add("modal--hidden-opacity");
-  }, 3000);
+  }, 2000);
   setTimeout(() => {
     errorModalWindow.classList.add("modal--hidden-display");
-  }, 4000);
+  }, 2500);
 }
