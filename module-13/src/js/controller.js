@@ -10,7 +10,7 @@ export default class Controller extends EventEmitter {
     view.on("add", this.addNote.bind(this));
     view.on("remove", this.removeNote.bind(this));
 
-    return this.showLocalNotes().bind(this);
+    return this.showLocalNotes();
   }
 
   addNote(note) {
